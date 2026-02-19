@@ -1,5 +1,7 @@
 extends Area2D
 
+signal hit
+
 @export var speed = 400 # How fast that player will move in pixels/sec
 var screen_size # Game window size
 
@@ -40,3 +42,20 @@ func _process(delta: float) -> void:
 		$AnimatedSprite2D.animation = "up"
 		$AnimatedSprite2D.flip_h = false
 		$AnimatedSprite2D.flip_v = velocity.y > 0
+
+
+func _on_body_entered(body: Node2D) -> void:
+	hide() # Hide player after being hit
+	hit.emit()
+	# The set_deferred tells godot to disable the collision object when it
+	# is safe to do so.
+	$CollisionShape2D.set_deferred("disabled", true)
+
+# Function to start game
+func start(pos):
+	# Setting starting position of player
+	position = pos
+	# Showing player scene
+	show()
+	# Re enabling collision on player
+	$CollisionShape2D.disabled = false
